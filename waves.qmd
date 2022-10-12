@@ -1,0 +1,73 @@
+---
+title: "Making Waves"
+theme: "cosmo"
+---
+
+## Making Waves
+
+We can make waves by manually calculating one "base" wave...
+
+```{r library_loadin, message=FALSE}
+#===============================================================================
+#Library Load-in----------------------------------------------------------------
+#===============================================================================
+library(tidyverse)
+
+#===============================================================================
+#Base Wave Data-----------------------------------------------------------------
+#===============================================================================
+pointy_wave <- tibble(x = c(0,5,5,0,0),
+                      y = c(0,.5,.5,1,0),
+                      group = "wave")
+```
+
+Setting options to iterate over the "base" wave...
+
+```{r iteration_options}
+#===============================================================================
+#Iteration Options--------------------------------------------------------------
+#===============================================================================
+#Number of waves#
+n <- 1:5
+
+#Y Transformations for each wave (to "stack" them)#
+y_trans <- c(1,0,0,1,1)
+```
+
+Iteration these options over the initial "base" wave dataframe into a new dataframe...
+
+```{r data_iteration}
+#===============================================================================
+#Data Iteration-----------------------------------------------------------------
+#===============================================================================
+pointy_waves <- map_df(n, ~ pointy_wave |>
+                          mutate(y = y + y_trans*.x,
+                                 group = paste0(group,.x)))
+```
+
+Setting up our aesthetic options...
+
+```{r aesthetics}
+#===============================================================================
+#Aesthetics---------------------------------------------------------------------
+#===============================================================================
+background_color <- "#ad1726" #Red
+fill_color <- "#1f819c" #Lighter blue
+line_color <- "#0f104a" #Darker blue
+line_size <- 4 #Chonk boi
+```
+
+And finally plotting the image...
+
+```{r final_plot}
+  
+#===============================================================================
+#Final Plotting-----------------------------------------------------------------
+#===============================================================================
+pointy_waves |>
+  ggplot(aes(x,y, group = group))+
+  theme_void()+
+  geom_polygon(fill = fill_color, color = line_color, size = line_size)+
+  theme(plot.background = element_rect(fill = background_color))+
+  coord_polar()
+```
